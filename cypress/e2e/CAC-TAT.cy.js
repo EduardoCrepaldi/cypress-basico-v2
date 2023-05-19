@@ -1,7 +1,7 @@
 /// <reference types="Cypress" />
 
 describe('Central de Atendimento ao Cliente TAT', () => {
-
+  const THREE_SECONDS_IN_MS = 3000
   beforeEach(() => {
     cy.visit('./src/index.html')
   })
@@ -11,22 +11,27 @@ describe('Central de Atendimento ao Cliente TAT', () => {
   })
 
   it('preenche os campos obrigatórios e envia o formulário', () => {
+    cy.clock()
     cy.get('#firstName').type('Eduardo')
     cy.get('#lastName').type('Crepaldi', { log: false })
     cy.get('#email').type('eduardo@teste.com')
     cy.get('#open-text-area').type('Meu primeiro teste automatizado no curso de Cypress com Walmlyr ', { delay: 0 })
     cy.get('button[type="submit"]').click()
     cy.get('.success').should('be.visible')
+    cy.tick(THREE_SECONDS_IN_MS)
+    cy.get('.success').should('be.not.visible')
   })
 
   it('exibe mensagem de erro ao submeter o formulário com um email com formatação inválida', () => {
+    cy.clock()
     cy.get('#firstName').type('Eduardo')
     cy.get('#lastName').type('Crepaldi')
     cy.get('#email').type('eduardo@falta')
     cy.get('#open-text-area').type('Meu primeiro teste automatizado no curso de Cypress com Walmlyr ', { delay: 0 })
     cy.get('button[type="submit"]').click()
     cy.get('.error').should('be.visible')
-    cy.get('.error').should('be.visible')
+    cy.tick(THREE_SECONDS_IN_MS)
+    cy.get('.error').should('be.not.visible')
   })
 
   it('verifica se o campo telefone só aceita numero', () => {
@@ -38,6 +43,7 @@ describe('Central de Atendimento ao Cliente TAT', () => {
   })
 
   it('exibe mensagem de erro quando o telefone se torna obrigatório mas não é preenchido antes do envio do formulário', () => {
+    cy.clock()
     cy.get('#firstName').type('Eduardo')
     cy.get('#lastName').type('Crepaldi')
     cy.get('#email').type('eduardo@teste.com')
@@ -46,7 +52,8 @@ describe('Central de Atendimento ao Cliente TAT', () => {
     cy.get('button[type="submit"]').click()
     cy.get('span[class="phone-label-span required-mark"]').should('be.visible')
     cy.get('.error').should('be.visible')
-  })
+    cy.tick(THREE_SECONDS_IN_MS)
+    cy.get('.error').should('be.not.visible')  })
 
   it('preenche e limpa os campos nome, sobrenome, email e telefone', () => {
     cy.get('#firstName')
@@ -75,8 +82,11 @@ describe('Central de Atendimento ao Cliente TAT', () => {
   })
 
   it('exibe mensagem de erro ao submeter o formulário sem preencher os campos obrigatórios', () => {
+    cy.clock()
     cy.get('button[type="submit"]').click()
     cy.get('.error').should('be.visible')
+    cy.tick(THREE_SECONDS_IN_MS)
+    cy.get('.error').should('be.not.visible')
   })
 
   it('envia o formuário com sucesso usando um comando customizado', () => {
@@ -86,19 +96,11 @@ describe('Central de Atendimento ao Cliente TAT', () => {
       email: 'edu@teste.com',
       areaText: 'Meu primeiro teste automatizado no curso de Cypress com Walmlyr '
     }
+    cy.clock()//Parando o relogio do navegador
     cy.fillMandatoryFieldsAndSubmit(user)
     cy.get('.success').should('be.visible')
-  })
-
-  it('envia o formuário com sucesso usando um comando customizado', () => {
-    const user = {
-      name: 'Eduardo',
-      lastName: 'Crepaldi',
-      email: 'edu@teste.com',
-      areaText: 'Meu primeiro teste automatizado no curso de Cypress com Walmlyr '
-    }
-    cy.fillMandatoryFieldsAndSubmit(user)
-    cy.get('.success').should('be.visible')
+    cy.tick(THREE_SECONDS_IN_MS)// Passando 3seg o relogio do navegador, neste caso o toggle não estará mais aparecendo
+    cy.get('.success').should('be.not.visible')
   })
 
   it('seleciona um produto (YouTube) por seu texto', () => {
