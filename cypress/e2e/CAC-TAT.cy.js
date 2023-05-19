@@ -235,7 +235,12 @@ describe('Central de Atendimento ao Cliente TAT', () => {
         expect(statusText).eql('OK')
         expect(body).contains('CAC TAT')
       })
-    
+  })
+
+  it.only('encontrar o gato escondido no site', ()=>{
+    cy.get('#cat')
+      .invoke('show')
+      .should('be.visible')
   })
 
 })
