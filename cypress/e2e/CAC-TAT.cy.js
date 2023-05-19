@@ -89,19 +89,23 @@ describe('Central de Atendimento ao Cliente TAT', () => {
     cy.get('.error').should('be.not.visible')
   })
 
-  it('envia o formuário com sucesso usando um comando customizado', () => {
-    const user = {
-      name: 'Eduardo',
-      lastName: 'Crepaldi',
-      email: 'edu@teste.com',
-      areaText: 'Meu primeiro teste automatizado no curso de Cypress com Walmlyr '
-    }
-    cy.clock()//Parando o relogio do navegador
-    cy.fillMandatoryFieldsAndSubmit(user)
-    cy.get('.success').should('be.visible')
-    cy.tick(THREE_SECONDS_IN_MS)// Passando 3seg o relogio do navegador, neste caso o toggle não estará mais aparecendo
-    cy.get('.success').should('be.not.visible')
+  //LODASH => EXECUTANDO 3 VEZES O MESMO TESTE
+  Cypress._.times(3, ()=> {
+    it('envia o formuário com sucesso usando um comando customizado', () => {
+      const user = {
+        name: 'Eduardo',
+        lastName: 'Crepaldi',
+        email: 'edu@teste.com',
+        areaText: 'Meu primeiro teste automatizado no curso de Cypress com Walmlyr '
+      }
+      cy.clock()//Parando o relogio do navegador
+      cy.fillMandatoryFieldsAndSubmit(user)
+      cy.get('.success').should('be.visible')
+      cy.tick(THREE_SECONDS_IN_MS)// Passando 3seg o relogio do navegador, neste caso o toggle não estará mais aparecendo
+      cy.get('.success').should('be.not.visible')
+    })
   })
+  
 
   it('seleciona um produto (YouTube) por seu texto', () => {
     cy.get('#product')
@@ -194,6 +198,44 @@ describe('Central de Atendimento ao Cliente TAT', () => {
     cy.get('#title')
       .should('have.text', 'CAC TAT - Política de privacidade')
     cy.contains('Talking About Testing').should('be.visible')
+  })
+
+
+  it('exibe e esconde as mensagens de sucesso e erro usando o .invoke', () => {
+    cy.get('.success')
+      .should('not.be.visible')
+      .invoke('show')
+      .should('be.visible')
+      .and('contain', 'Mensagem enviada com sucesso.')
+      .invoke('hide')
+      .should('not.be.visible')
+
+    cy.get('.error')
+      .should('not.be.visible')
+      .invoke('show')
+      .should('be.visible')
+      .and('contain', 'Valide os campos obrigatórios!')
+      .invoke('hide')
+      .should('not.be.visible')
+  })
+
+  it('preenche a area de texto usando o comando invoke', ()=>{
+    const bigString = Cypress._.repeat("Eduardo 26 anos", 5)
+    cy.get('#open-text-area')
+      .invoke('val', bigString)
+      .should('have.value', bigString)
+
+  })
+
+  it('faz uma requisição HTTP', ()=>{
+    cy.request('GET','https://cac-tat.s3.eu-central-1.amazonaws.com/index.html',)
+      .then((response) =>{
+        const {status, statusText, body} = response
+        expect(status).eql(200)
+        expect(statusText).eql('OK')
+        expect(body).contains('CAC TAT')
+      })
+    
   })
 
 })
