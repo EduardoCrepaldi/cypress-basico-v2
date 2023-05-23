@@ -232,7 +232,7 @@ describe('Central de Atendimento ao Cliente TAT', () => {
       .then((response) =>{
         const {status, statusText, body} = response
         expect(status).eql(200)
-        expect(statusText).eql('OK')
+        expect(statusText).eql('OKTESTE')
         expect(body).contains('CAC TAT')
       })
   })
@@ -242,5 +242,5 @@ describe('Central de Atendimento ao Cliente TAT', () => {
       .invoke('show')
       .should('be.visible')
   })
-
+//testando pull request
 })
